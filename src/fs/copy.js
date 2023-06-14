@@ -16,12 +16,8 @@ const copy = async () => {
         }
 
         const files = await readdir(originalPath, { withFileTypes: true });
-
-        for (const file of files) { 
-            const orignalFilePath = join(originalPath, file.name);
-            const copyFilePath = join(copyPath, file.name);
-            await copyFile(orignalFilePath, copyFilePath);
-        }
+        console.log(files);
+        
     } catch (err) {
         throw new Error(err.message);
     }
