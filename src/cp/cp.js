@@ -10,10 +10,14 @@ const spawnChildProcess = async (args) => {
         stdio: ['pipe', 'pipe', 'pipe', 'ipc']  
     });
 
-    childProcess.stdin.write(args.join(' '));
+    childProcess.stdin.write('Hi from master process!');
 
     childProcess.stdout.on('data', data => {
         process.stdout.write(data);
+    });
+
+    childProcess.on('exit', code => {
+        process.stdout.write(`Child process exited with code: ${code}`);
     });
       
     childProcess.stderr.on('data', data => {
