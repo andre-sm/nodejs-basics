@@ -2,7 +2,7 @@ import { createWriteStream } from "fs";
 import { fileURLToPath } from 'url';
 import { join, dirname } from "path";
 import { stdin, stdout } from "process";
-import * as readline from 'readline';
+import * as readline from 'readline/promises';
 
 const write = async () => {
     const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -18,14 +18,14 @@ const write = async () => {
         process.exit();
     };
 
-    readLine.on('line', line => {
+    for await (const line of readLine) {
         const currentLine = line.toString().trim();
-        if(currentLine === 'exit') {
+        if (currentLine === 'exit') {
             closeProcess();
         } else {
             writeStream.write(`${currentLine}\n`);
         }
-    });
+    }
 };
 
 await write();
