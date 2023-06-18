@@ -1,18 +1,29 @@
-import { readdir } from "fs/promises";
-import { existsSync } from "fs";
+import { readdir, access } from "fs/promises";
 import { fileURLToPath } from 'url';
 import { join, dirname } from "path";
+
+const isExist = async (path) => {
+    try {
+        await access(path);
+        return true;
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            return false;
+        } else {
+            throw new Error(err.message);
+        }
+    }
+};
 
 const list = async () => {
     const __dirname = dirname(fileURLToPath(import.meta.url));
     const filesPath = join(__dirname, 'files');
 
     try {
-        if (!existsSync(filesPath)) {
+        if (!(await isExist(filesPath))) {
             throw new Error('FS operation failed');
         }
-        const files = (await readdir(filesPath, { withFileTypes: true })).map((file) => file.name);
-        console.log(files);
+        console.log(await readdir(filesPath));
     } catch (err) {
         throw new Error(err.message);
     }

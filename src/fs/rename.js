@@ -1,7 +1,19 @@
-import fs from "fs/promises";
-import { existsSync } from "fs";
+import { rename as renameFile, access } from "fs/promises";
 import { fileURLToPath } from 'url';
 import { join, dirname } from "path";
+
+const isExist = async (path) => {
+    try {
+        await access(path);
+        return true;
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            return false;
+        } else {
+            throw new Error(err.message);
+        }
+    }
+};
 
 const rename = async () => {
     const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -9,14 +21,14 @@ const rename = async () => {
     const newPath = join(__dirname, 'files', 'properFilename.md');
 
     try {
-        if (!existsSync(oldPath) || existsSync(newPath)) {
+        if (!(await isExist(oldPath)) || await isExist(newPath)) {
             throw new Error('FS operation failed');
         }
-        await fs.rename(oldPath, newPath);
+        await renameFile(oldPath, newPath);
+        console.log('File was renamed!');
     } catch (err) {
         throw new Error(err.message);
     }
-
 };
 
 await rename();
