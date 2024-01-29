@@ -12,6 +12,10 @@ const spawnChildProcess = async (args) => {
 
     childProcess.stdin.write('Hi from master process!');
 
+    process.stdin.on('data', data => {
+        childProcess.stdin.write(data);
+    });
+
     childProcess.stdout.on('data', data => {
         process.stdout.write(data);
     });
